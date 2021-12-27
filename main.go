@@ -14,11 +14,14 @@ import (
 
 func main() {
 	app := iris.New()
+	//PHP Server
 	app.Get("/{path:path}", func(ctx iris.Context) {
 		//ctx.Request()
-		Root := "./"//"/home/wwwroot/www/"
+		Root := "/home/wwwroot/www/"
 		path := ctx.Params().Get("path")
+
 		log.Print(path)
+
 		if strings.Contains(path, ".") {
 			if strings.Contains(path, "./") {
 				// ../../../home/user/
@@ -33,11 +36,12 @@ func main() {
 				}
 				//good file!
 				if file.Exists(Root + path) {
+					//!
 					if lastname == ".php" {
 						loadphp(ctx, Root+path)
 					} else if lastname == ".html" || lastname == ".css" || lastname == ".js" {
 						ctx.HTML(file.Reader(Root + path))
-					} else if lastname == ".zip" || lastname == ".mp3" {
+					} else if lastname == ".zip" || lastname == ".mp3" || lastname ==".png" || lastname ==".gif" {
 						log.Print("File:" + Root + path)
 						// /c.mp3 or cc/c.mp3
 						if strings.Contains(path, "/") {
@@ -140,8 +144,8 @@ func main() {
 	}
 }
 
-func loadphp(ctx iris.Context, path string) bool {
-	PHPcgi(ctx.ResponseWriter(), ctx.Request() /*cgibin*/, "/usr/lib/cgi-bin/php7.4", path)
+func loadphp(ctx iris.Context ,path string) bool {
+	PHPcgi(ctx.ResponseWriter(), ctx.Request() /*cgibin*/, "/usr/lib/cgi-bin/php7.4",path)
 	return true
 }
 
@@ -150,5 +154,20 @@ func PHPcgi(w http.ResponseWriter, r *http.Request, cgiBin string, scriptFile st
 	handler.Path = cgiBin
 	handler.Env = append(handler.Env, "REDIRECT_STATUS=CGI")
 	handler.Env = append(handler.Env, "SCRIPT_FILENAME="+scriptFile)
+	//new
+	handler.Env = append(handler.Env, "SCRIPT_NAME="+"index.php")
+	handler.Env = append(handler.Env, "HTTP_HOST="+r.Host)
+
+	var DOCUMENT_ROOT string
+	/*GetDOCUMENT_ROOT*/
+	if(strings.Contains(scriptFile,"index.php")){
+		DOCUMENT_ROOT =  string(scriptFile[:strings.LastIndex(scriptFile, "index.php")])
+	}else if(strings.Contains(scriptFile,"/")){
+		DOCUMENT_ROOT = string(scriptFile[:strings.LastIndex(scriptFile,"/")])
+	}
+	handler.Env = append(handler.Env, "DOCUMENT_ROOT="+DOCUMENT_ROOT)
+
+	print("DOCUMENT_ROOT="+DOCUMENT_ROOT+"\n")
+	//log.Print(r.Host)
 	handler.ServeHTTP(w, r)
 }
