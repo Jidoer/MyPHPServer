@@ -38,7 +38,7 @@ func main() {
 				if file.Exists(Root + path) {
 					//!
 					if lastname == ".php" {
-						loadphp(ctx, Root+path)
+						loadphp(ctx, Root,path)
 					} else if lastname == ".html" || lastname == ".css" || lastname == ".js" {
 						ctx.HTML(file.Reader(Root + path))
 					} else if lastname == ".zip" || lastname == ".mp3" || lastname ==".png" || lastname ==".gif" {
@@ -61,7 +61,7 @@ func main() {
 		} else {
 			//No file or cc/bb/index
 			if file.Exists(Root + path + "/index.php") {
-				loadphp(ctx, Root+path+"/index.php")
+				loadphp(ctx, Root,path+"/index.php")
 			} else if file.Exists(Root + path + "/index.html") {
 				ctx.HTML(file.Reader(Root + path + "/index.html"))
 			} else if file.Exists(Root + path + "/index.htm") {
@@ -144,28 +144,40 @@ func main() {
 	}
 }
 
-func loadphp(ctx iris.Context ,path string) bool {
-	PHPcgi(ctx.ResponseWriter(), ctx.Request() /*cgibin*/, "/usr/lib/cgi-bin/php7.4",path)
+func loadphp(ctx iris.Context ,/*path string*/Root string, Path string) bool {
+	PHPcgi(ctx.ResponseWriter(), ctx.Request() /*cgibin*/, "/usr/lib/cgi-bin/php7.4",Root, Path)
 	return true
 }
 
-func PHPcgi(w http.ResponseWriter, r *http.Request, cgiBin string, scriptFile string) {
+func PHPcgi(w http.ResponseWriter, r *http.Request, cgiBin string, /*scriptFile string*/Root string, Path string) {
+	//scriptFile:PHPFilePath
+	scriptFile := Root + Path
 	handler := new(cgi.Handler)
 	handler.Path = cgiBin
 	handler.Env = append(handler.Env, "REDIRECT_STATUS=CGI")
 	handler.Env = append(handler.Env, "SCRIPT_FILENAME="+scriptFile)
 	//new
-	handler.Env = append(handler.Env, "SCRIPT_NAME="+"index.php")
 	handler.Env = append(handler.Env, "HTTP_HOST="+r.Host)
+	handler.Env = append(handler.Env, "SERVER_NAME="+r.Host)
 
 	var DOCUMENT_ROOT string
+	var SCRIPT_NAME string
 	/*GetDOCUMENT_ROOT*/
-	if(strings.Contains(scriptFile,"index.php")){
-		DOCUMENT_ROOT =  string(scriptFile[:strings.LastIndex(scriptFile, "index.php")])
-	}else if(strings.Contains(scriptFile,"/")){
+	if(strings.Contains(Path,"/")){
 		DOCUMENT_ROOT = string(scriptFile[:strings.LastIndex(scriptFile,"/")])
+		SCRIPT_NAME = string(scriptFile[strings.LastIndex(scriptFile,"/"):])
+	}else{
+		// xxx.php index.php
+		DOCUMENT_ROOT = Root
+		SCRIPT_NAME = Path
 	}
+
+	handler.Env = append(handler.Env, "SCRIPT_NAME="+SCRIPT_NAME)
 	handler.Env = append(handler.Env, "DOCUMENT_ROOT="+DOCUMENT_ROOT)
+
+
+
+
 
 	print("DOCUMENT_ROOT="+DOCUMENT_ROOT+"\n")
 	//log.Print(r.Host)
