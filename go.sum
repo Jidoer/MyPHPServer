@@ -51,6 +51,8 @@ github.com/json-iterator/go v1.1.9 h1:9yzud/Ht36ygwatGx56VwCZtlI/2AD15T1X2sjSuGn
 github.com/json-iterator/go v1.1.9/go.mod h1:KdQUCv79m/52Kvf8AW2vK1V8akMuk1QjK/uOdHXbAo4=
 github.com/kangc666/file v0.0.0-20211213141134-3a1e7f19eea9 h1:RIAyyQnkhmIZEZ4n2QBvVJn5tqTMaKjyS0X4Ru2unYs=
 github.com/kangc666/file v0.0.0-20211213141134-3a1e7f19eea9/go.mod h1:2gscbprCk4QejPadqr/hddouURmsl9jwVP7yzcuG2Y0=
+github.com/kangc666/file v0.0.0-20220105082348-a73d1bc34fbd h1:hAw9PDVIqSdo7XHMMu+EV4gyOTiEs5S5T1B3mGAK2+Q=
+github.com/kangc666/file v0.0.0-20220105082348-a73d1bc34fbd/go.mod h1:2gscbprCk4QejPadqr/hddouURmsl9jwVP7yzcuG2Y0=
 github.com/kataras/golog v0.0.10 h1:vRDRUmwacco/pmBAm8geLn8rHEdc+9Z4NAr5Sh7TG/4=
 github.com/kataras/golog v0.0.10/go.mod h1:yJ8YKCmyL+nWjERB90Qwn+bdyBZsaQwU3bTVFgkFIp8=
 github.com/kataras/iris/v12 v12.1.8 h1:O3gJasjm7ZxpxwTH8tApZsvf274scSGQAUpNe47c37U=

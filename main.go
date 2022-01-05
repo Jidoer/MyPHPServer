@@ -38,10 +38,10 @@ func main() {
 				if file.Exists(Root + path) {
 					//!
 					if lastname == ".php" {
-						loadphp(ctx, Root,path)
+						loadphp(ctx, Root, path)
 					} else if lastname == ".html" || lastname == ".css" || lastname == ".js" {
-						ctx.HTML(file.Reader(Root + path))
-					} else if lastname == ".zip" || lastname == ".mp3" || lastname ==".png" || lastname ==".gif" {
+						ctx.Write([]byte(file.Reader(Root + path)))
+					} else if lastname == ".zip" || lastname == ".mp3" || lastname == ".png" || lastname == ".gif" {
 						log.Print("File:" + Root + path)
 						// /c.mp3 or cc/c.mp3
 						if strings.Contains(path, "/") {
@@ -61,17 +61,16 @@ func main() {
 		} else {
 			//No file or cc/bb/index
 			if file.Exists(Root + path + "/index.php") {
-				loadphp(ctx, Root,path+"/index.php")
+				loadphp(ctx, Root, path+"/index.php")
 			} else if file.Exists(Root + path + "/index.html") {
-				ctx.HTML(file.Reader(Root + path + "/index.html"))
+				ctx.Write([]byte(file.Reader(Root + path + "/index.html")))
 			} else if file.Exists(Root + path + "/index.htm") {
-				ctx.HTML(file.Reader(Root + path + "/index.htm"))
+				ctx.Write([]byte(file.Reader(Root + path + "/index.htm")))
 			} else if file.Exists(Root + path + "/index.c") {
-				ctx.HTML(file.Reader(Root + path + "/index.c"))
+				ctx.Write([]byte(file.Reader(Root + path + "/index.c")))
 			} else {
 				//403!
-				ctx.Header("HTTP/1.1", "403")
-				ctx.HTML("403 ERROR!")
+				ctx.HTML(ListFile(Root,path))
 			}
 		}
 
@@ -144,12 +143,39 @@ func main() {
 	}
 }
 
-func loadphp(ctx iris.Context ,/*path string*/Root string, Path string) bool {
-	PHPcgi(ctx.ResponseWriter(), ctx.Request() /*cgibin*/, "/usr/lib/cgi-bin/php7.4",Root, Path)
+func ListFile(ROOT, Path string) string {
+	dir_list, e := ioutil.ReadDir(ROOT + Path)
+	if e != nil {
+		fmt.Println("read dir error")
+		return "error"
+	}
+	   /*
+	   for i, v := range dir_list {
+	       fmt.Println(i, "=", v.Name())
+	   }*/
+	tatol := "<hr>"
+	for i, v := range dir_list {
+		var myname string
+		if file.IsDir(ROOT + Path + "/" + v.Name()) {
+			myname = v.Name() + "/"
+		} else {
+			myname = v.Name()
+		}
+
+		tatol = tatol + "<a href='/" + Path + "/" + v.Name() + "'>" + myname /*v.Name()*/ + "</a><hr>"
+		//log.Print(i,string(rune(i)))
+		fmt.Println(i, v.Name()+string(rune(i)))
+	}
+	//log.Print(tatol)
+	return "<h1>Index Of</h1>" + tatol + "<p align='center'>Powered By: FlyKO</p>"
+}
+
+func loadphp(ctx iris.Context /*path string*/, Root string, Path string) bool {
+	PHPcgi(ctx.ResponseWriter(), ctx.Request() /*cgibin*/, "/usr/lib/cgi-bin/php7.4", Root, Path)
 	return true
 }
 
-func PHPcgi(w http.ResponseWriter, r *http.Request, cgiBin string, /*scriptFile string*/Root string, Path string) {
+func PHPcgi(w http.ResponseWriter, r *http.Request, cgiBin string /*scriptFile string*/, Root string, Path string) {
 	//scriptFile:PHPFilePath
 	scriptFile := Root + Path
 	handler := new(cgi.Handler)
@@ -163,10 +189,10 @@ func PHPcgi(w http.ResponseWriter, r *http.Request, cgiBin string, /*scriptFile 
 	var DOCUMENT_ROOT string
 	var SCRIPT_NAME string
 	/*GetDOCUMENT_ROOT*/
-	if(strings.Contains(Path,"/")){
-		DOCUMENT_ROOT = string(scriptFile[:strings.LastIndex(scriptFile,"/")])
-		SCRIPT_NAME = string(scriptFile[strings.LastIndex(scriptFile,"/"):])
-	}else{
+	if strings.Contains(Path, "/") {
+		DOCUMENT_ROOT = string(scriptFile[:strings.LastIndex(scriptFile, "/")])
+		SCRIPT_NAME = string(scriptFile[strings.LastIndex(scriptFile, "/"):])
+	} else {
 		// xxx.php index.php
 		DOCUMENT_ROOT = Root
 		SCRIPT_NAME = Path
@@ -175,11 +201,7 @@ func PHPcgi(w http.ResponseWriter, r *http.Request, cgiBin string, /*scriptFile 
 	handler.Env = append(handler.Env, "SCRIPT_NAME="+SCRIPT_NAME)
 	handler.Env = append(handler.Env, "DOCUMENT_ROOT="+DOCUMENT_ROOT)
 
-
-
-
-
-	print("DOCUMENT_ROOT="+DOCUMENT_ROOT+"\n")
+	print("DOCUMENT_ROOT=" + DOCUMENT_ROOT + "\n")
 	//log.Print(r.Host)
 	handler.ServeHTTP(w, r)
 }

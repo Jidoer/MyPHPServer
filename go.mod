@@ -2,6 +2,8 @@ module MyPHPServer
 
 go 1.17
 
+require github.com/kangc666/file v0.0.0-20220105082348-a73d1bc34fbd
+
 require (
 	github.com/BurntSushi/toml v0.3.1 // indirect
 	github.com/CloudyKit/fastprinter v0.0.0-20200109182630-33d98a066a53 // indirect
@@ -15,7 +17,6 @@ require (
 	github.com/iris-contrib/pongo2 v0.0.1 // indirect
 	github.com/iris-contrib/schema v0.0.1 // indirect
 	github.com/json-iterator/go v1.1.9 // indirect
-	github.com/kangc666/file v0.0.0-20211213141134-3a1e7f19eea9
 	github.com/kataras/golog v0.0.10 // indirect
 	github.com/kataras/iris/v12 v12.1.8 // indirect
 	github.com/kataras/pio v0.0.2 // indirect
