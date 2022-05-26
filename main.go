@@ -41,7 +41,7 @@ func main() {
 						loadphp(ctx, Root, path)
 					} else if lastname == ".html" || lastname == ".css" || lastname == ".js" {
 						ctx.Write([]byte(file.Reader(Root + path)))
-					} else if lastname == ".zip" || lastname == ".mp3" || lastname == ".png" || lastname == ".gif" {
+					} else if lastname == ".zip" || lastname == ".mp3" || lastname == ".png" || lastname == ".gif" || lastname ==".mp4" {
 						log.Print("File:" + Root + path)
 						// /c.mp3 or cc/c.mp3
 						if strings.Contains(path, "/") {
