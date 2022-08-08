@@ -25,11 +25,11 @@ func ListFile(ROOT, Path string) string {
 			myname = v.Name()
 		}
 
-		tatol = tatol + "<a href='/" + Path + "/" + v.Name() + "'>" + myname /*v.Name()*/ + "</a><hr>"
+		tatol = tatol + "<a href='" + Path + "/" + v.Name() + "'>" + myname /*v.Name()*/ + "</a><hr>"
 		//log.Print(i,string(rune(i)))
 		fmt.Println(i, v.Name()+string(rune(i)))
 	}
 	//log.Print(tatol)
 	return "<h1>Index Of</h1>" + tatol + "<p align='center'>Powered By: FlyKO</p>"
-	
+
 }

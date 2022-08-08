@@ -137,9 +137,12 @@ func (s *Server) GetPHPHandler() {
 					ctx.Write(file.Reader2Byte(s.Config.Root + path + "/index.html"))
 					return
 				}
+				ctx.StatusCode(http.StatusForbidden)
+				page := ListFile(s.Config.Root,path)
+				ctx.HTML(page)
 				//ctx.StatusCode(http.StatusNotFound)
 				//403
-				ctx.StatusCode(http.StatusForbidden)
+				//ctx.StatusCode(http.StatusForbidden)
 				break
 			}
 		case "source":
