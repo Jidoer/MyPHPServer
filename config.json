@@ -1,0 +1,9 @@
+{
+    "root": "C:/Users/mrkan/go/MyPHPServer/www/",
+    "port": 9000,
+    "host": "0.0.0.0",
+    "cgibin": "./cgi/php/php-cgi.exe",
+    "usessl": false,
+    "crtpath": "",
+    "keypath": ""
+}
