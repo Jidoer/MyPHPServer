@@ -25,3 +25,6 @@ main
 cgi
 proxy.go
 *.zip
+www/0.php
+www/1.php
+www/2.php
