@@ -138,7 +138,7 @@ func (s *Server) GetPHPHandler() {
 					return
 				}
 				ctx.StatusCode(http.StatusForbidden)
-				page := ListFile(s.Config.Root,path)
+				page := ListFile(s.Config.Root, path)
 				ctx.HTML(page)
 				//ctx.StatusCode(http.StatusNotFound)
 				//403
@@ -146,6 +146,12 @@ func (s *Server) GetPHPHandler() {
 				break
 			}
 		case "source":
+			ctx.Write(file.Reader2Byte(s.Config.Root + path))
+		case "css":
+			ctx.ContentType("text/css")
+			ctx.Write(file.Reader2Byte(s.Config.Root + path))
+		case "js":
+			ctx.ContentType("application/javascript")
 			ctx.Write(file.Reader2Byte(s.Config.Root + path))
 		default:
 			ctx.StatusCode(http.StatusNotFound)
@@ -172,7 +178,7 @@ func (s *Server) GetFileType(path string) (string, string) { //full path
 		path = path[strings.LastIndex(path, "/")+1:] //file name
 	}
 	if !strings.Contains(path, ".") {
-		if file.IsDir(s.Config.Root+ path) {
+		if file.IsDir(s.Config.Root + path) {
 			return path, "dir"
 		}
 		return path, "file"
@@ -185,9 +191,13 @@ func GetSwitch(filetype string) string {
 	switch filetype {
 	case "php":
 		return "run"
-	case "html", "htm", "js", "css", "json", "txt", "xml", "c":
+	case "html", "htm", "json", "txt", "xml", "c":
 		return "source"
-	case "jpg", "jpeg", "png", "gif", "bmp", "ico", "zip", "rar", "7z", "gz", "bz2", "tar", "tgz", "tbz2", "mp4", "mp3", "avi", "flv", "wmv", "mkv", "mov", "mpeg", "mpg", "m4v", "3gp", "3g2", "wav", "wma", "flac", "aac", "m4a":
+	case "css":
+		return "css"
+	case "js":
+		return "js"
+	case "jpg", "jpeg", "png", "gif", "bmp", "ico", "zip", "rar", "7z", "gz", "bz2", "tar", "tgz", "tbz2", "mp4", "mp3", "avi", "flv", "wmv", "mkv", "mov", "mpeg", "mpg", "m4v", "3gp", "3g2", "wav", "wma", "flac", "aac", "m4a", "pdf":
 		return "download"
 	case "dir":
 		return "dir"
